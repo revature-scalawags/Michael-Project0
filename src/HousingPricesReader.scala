@@ -29,6 +29,7 @@ object HousingPricesReader extends App{
     val init =  cmd match {
       case "1" => printHouses()
       case "2" => findMax()
+      case "3" => findMin()
     }
   }
 
@@ -45,6 +46,14 @@ object HousingPricesReader extends App{
       if (max<=price.toInt) max = price.toInt
     }
     println(max)
+  }
+  def findMin() = {
+    var min = 10000000
+    for (ln <- file.getLines().drop(1)){
+      val price = ln.split(",")(6).trim
+      if (min>=price.toInt) min = price.toInt
+    }
+    println(min)
   }
 
 }
