@@ -26,11 +26,17 @@ object HousingPricesReader extends App{
   def initState() = {
     println("What would you like to do?")
     val cmd = scala.io.StdIn.readLine()
-    val init =  cmd match {
-      case "1" => printHouses()
-      case "2" => findMax()
-      case "3" => findMin()
+    do {
+      cmd match {
+        case "1" => printHouses()
+        case "2" => findMax()
+        case "3" => findMin()
+        case "4" => file.getLines() foreach println  //this prints houses
+        case "q" => print("Exiting")
+        case _ => print("Invalid option")
+      }
     }
+    while (scala.io.StdIn.readLine() != "q" )
   }
 
   def printHouses() = {
@@ -48,7 +54,7 @@ object HousingPricesReader extends App{
     println(max)
   }
   def findMin() = {
-    var min = 10000000
+    var min = Int.MaxValue
     for (ln <- file.getLines().drop(1)){
       val price = ln.split(",")(6).trim
       if (min>=price.toInt) min = price.toInt
