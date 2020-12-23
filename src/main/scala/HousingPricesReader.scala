@@ -3,14 +3,8 @@ import scala.collection.mutable.{ArrayBuffer, Map}
 import scala.io.BufferedSource
 
 import scala.collection.mutable.Map
-import org.mongodb.scala.MongoClient
 
-import org.mongodb.scala.bson.collection._
 import org.mongodb.scala.MongoClient
-import org.mongodb.scala.MongoDatabase
-import org.mongodb.scala.MongoCollection
-import org.mongodb.scala.Observer
-//import org.mongodb.scala.Completed
 
 /** HousingPricesReader
  * AUTHOR: Michael Tsoumpariotis
@@ -28,22 +22,27 @@ object HousingPricesReader extends App {
   //MONGO
   val houseDao = new HouseDao(MongoClient())
 
+  //COMMANDS
   instructions
   cli
 
-  //POST FUNCTIONS HERE
-  //IO, FILE HANDLING
-
+  /** Read File
+   *
+   * @return
+   */
   def readFile(): BufferedSource = {
     println("What file would you like to read?")
     fileName = scala.io.StdIn.readLine()
     return io.Source.fromFile(fileName)
   }
 
+  /** Parse Houses
+   *
+   * @return
+   */
   def parseHouses() = {
     val housesArrayBuffer = new ArrayBuffer[House]()
 
-    //drop(1)
     for (ln <- file.getLines()) {
       val Array(index, sqft, beds, baths, zip, year, price) = ln.split(",").map(_.trim)
       val house = House.apply(index, sqft, beds, baths, zip, year, price)
@@ -52,6 +51,11 @@ object HousingPricesReader extends App {
     housesArrayBuffer
   }
 
+  /** Average Price
+   *
+   * @param housesArrayBuffer
+   * @return
+   */
   def avgPrice(housesArrayBuffer: ArrayBuffer[House]): Int = {
     var avg = 0
     var m = Map[String, Int]()
@@ -62,6 +66,11 @@ object HousingPricesReader extends App {
     avg / housesArrayBuffer.length
   }
 
+  /** Output To File
+   *
+   * @param name
+   * @param argArrayBuffer
+   */
   def outputToFile(name: String, argArrayBuffer: ArrayBuffer[House]) = {
     val file = new File(name)
     val bw = new BufferedWriter(new FileWriter(file))
@@ -71,21 +80,43 @@ object HousingPricesReader extends App {
     println("Done")
   }
 
+  /** Add House
+   *
+   * @param sqft
+   * @param beds
+   * @param baths
+   * @param zip
+   * @param year
+   * @param price
+   */
   def addHouse(sqft: String, beds: String, baths: String, zip: String, year: String, price: String): Unit = {
     val index = (housesArrayBuffer.length + 1).toString
     housesArrayBuffer += House.apply(index, sqft, beds, baths, zip, year, price)
   }
 
+  /** Find Undervalued Houses
+   * Function finds undervalued Houses in a collection
+   * @param hab
+   * @return a collection of undervalued houses
+   */
   def findUndervalued(hab: ArrayBuffer[House]): ArrayBuffer[House] = {
     val bestValueHouses = hab.filter(h => (h.price.toInt < avgPrice(housesArrayBuffer)))
     bestValueHouses
   }
 
+  /** Print Houses
+   *print collection of houses given collection
+   * @param hab
+   */
   def printHouses(hab: ArrayBuffer[House]) = {
     println("#, sqft, beds, baths, zip, year, price")
     hab foreach println
   }
 
+  /** Print To Mongo
+   * prints House Collection to Mongodb
+   * @param hAB
+   */
   def printToMongo(hAB: ArrayBuffer[House]) = {
     val houseDao = new HouseDao(MongoClient())
 
@@ -94,8 +125,10 @@ object HousingPricesReader extends App {
     result foreach println
   }
 
-
-  //FUNCTIONALITY
+  /** cli
+   *Uses pattern matching to match user input with functionality
+   *
+   * */
   def cli() = {
     var cmd = ""
     val formatter = java.text.NumberFormat.getIntegerInstance
@@ -121,11 +154,19 @@ object HousingPricesReader extends App {
     }
   }
 
+  /** Print Houses
+   * prints all the houses in housesArrayBuffer
+   * */
   def printHouses() = {
     println("#, sqft, beds, baths, zip, year, price")
     housesArrayBuffer foreach println
   }
 
+  /** Max Price
+   * finds the max price given an ArrayBuffer
+   * @param hab
+   * @return max price
+   */
   def maxPrice(hab: ArrayBuffer[House]): Int = {
     var max = 0
     for (h <- hab) {
@@ -135,6 +176,11 @@ object HousingPricesReader extends App {
     max
   }
 
+  /** Min Price
+   * finds the min price given an ArrayBuffer
+   * @param hab
+   * @return min price
+   * */
   def minPrice(hab: ArrayBuffer[House]): Int = {
     var min = Int.MaxValue
     for (h <- hab) {
@@ -144,6 +190,9 @@ object HousingPricesReader extends App {
     min
   }
 
+  /** instructions
+   *
+   */
   def instructions = {
     println("Here is a list of commands: " +
       "\n\tprint                  - Print houses" +

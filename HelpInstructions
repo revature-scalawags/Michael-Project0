@@ -1,3 +1,12 @@
-1. Print houses
-2. Find max number of sqft, number of beds, number of baths, zip, newest home, or max housing price.
-3. Find min number of sqft, number of beds, number of baths, zip, oldest home, or min housing price.
+print                  - Print houses
+add                    - Add house with specified sqft, beds, baths, zip, year, and price
+max price              - Find max price of house
+min price              - Find min price of house
+average                - Find average price
+find under             - Find houses that are undervalued
+mongo                  - Outputs to mongo
+mongo undervalue       - Outputs undervalued houses to mongo
+save                   - Save current file
+save as                - Save current file as <specifiedName>
+i                      - Instructions
+q                      - exit
