@@ -52,7 +52,7 @@ object HousingPricesReader extends App {
     housesArrayBuffer
   }
 
-  def avgPrice(): Int = {
+  def avgPrice(housesArrayBuffer: ArrayBuffer[House]): Int = {
     var avg = 0
     var m = Map[String, Int]()
     for (a <- 0 until housesArrayBuffer.length) {
@@ -76,8 +76,8 @@ object HousingPricesReader extends App {
     housesArrayBuffer += House.apply(index, sqft, beds, baths, zip, year, price)
   }
 
-  def findUndervalued(housesArrayBuffer: ArrayBuffer[House]): ArrayBuffer[House] = {
-    val bestValueHouses = housesArrayBuffer.filter(House => (House.price.toInt < avgPrice()))
+  def findUndervalued(hab: ArrayBuffer[House]): ArrayBuffer[House] = {
+    val bestValueHouses = hab.filter(h => (h.price.toInt < avgPrice(housesArrayBuffer)))
     bestValueHouses
   }
 
@@ -105,9 +105,9 @@ object HousingPricesReader extends App {
       cmd match {
         case "print" => printHouses() //this prints houses
         case s"add $sqft $beds $baths $zip $year $price" => addHouse(sqft, beds, baths, zip, year, price)
-        case "max price" => val s = "Max price of a house is $" + "%,d".format(maxPrice()); println(s)
-        case "min price" => val s = "Min price of a house is $" + "%,d".format(minPrice()); println(s)
-        case "average" => val s = "Average price is $" + "%,d".format(avgPrice()); println(s)
+        case "max price" => val s = "Max price of a house is $" + "%,d".format(maxPrice(housesArrayBuffer)); println(s)
+        case "min price" => val s = "Min price of a house is $" + "%,d".format(minPrice(housesArrayBuffer)); println(s)
+        case "average" => val s = "Average price is $" + "%,d".format(avgPrice(housesArrayBuffer)); println(s)
         case "find under" => printHouses(findUndervalued(housesArrayBuffer))
         case "mongo" => printToMongo(housesArrayBuffer)
         case "mongo undervalue" => printToMongo(findUndervalued(housesArrayBuffer))
@@ -126,18 +126,18 @@ object HousingPricesReader extends App {
     housesArrayBuffer foreach println
   }
 
-  def maxPrice(): Int = {
+  def maxPrice(hab: ArrayBuffer[House]): Int = {
     var max = 0
-    for (h <- housesArrayBuffer) {
+    for (h <- hab) {
       val price = h.price
       if (max <= price.toInt) max = price.toInt
     }
     max
   }
 
-  def minPrice(): Int = {
+  def minPrice(hab: ArrayBuffer[House]): Int = {
     var min = Int.MaxValue
-    for (h <- housesArrayBuffer) {
+    for (h <- hab) {
       val price = h.price
       if (min >= price.toInt) min = price.toInt
     }

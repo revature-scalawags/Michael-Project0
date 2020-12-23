@@ -15,7 +15,6 @@ case class HouseDao(mongoClient: MongoClient) {
 
   val db = mongoClient.getDatabase("mongotestdb").withCodecRegistry(codecRegistry)
   val collection: MongoCollection[House] = db.getCollection("House")
-  println(collection.documentClass.toString)
 
   private def getResults[T](obs: Observable[T]): Seq[T] = {
     Await.result(obs.toFuture(), Duration(20, SECONDS))
