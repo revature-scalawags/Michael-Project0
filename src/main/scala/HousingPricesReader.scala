@@ -5,11 +5,12 @@ import scala.io.BufferedSource
 import scala.collection.mutable.Map
 
 import org.mongodb.scala.MongoClient
+import com.typesafe.scalalogging._
 
 /** HousingPricesReader
  * AUTHOR: Michael Tsoumpariotis
  */
-object HousingPricesReader extends App {
+object HousingPricesReader extends App with LazyLogging {
 
   var fileName = ""
   val helpInstructions = "HelpInstructions"
@@ -74,7 +75,7 @@ object HousingPricesReader extends App {
   def outputToFile(name: String, argArrayBuffer: ArrayBuffer[House]) = {
     val file = new File(name)
     val bw = new BufferedWriter(new FileWriter(file))
-    bw.write("Index, Living Space (sq ft), Beds, Baths, Zip, Year, List Price ($)\n")
+    //bw.write("Index, Living Space (sq ft), Beds, Baths, Zip, Year, List Price ($)\n")
     argArrayBuffer.foreach(House => bw.write(House.toString + "\n"))
     bw.close()
     println("Done")
@@ -144,11 +145,12 @@ object HousingPricesReader extends App {
         case "find under" => printHouses(findUndervalued(housesArrayBuffer))
         case "mongo" => printToMongo(housesArrayBuffer)
         case "mongo undervalue" => printToMongo(findUndervalued(housesArrayBuffer))
+        case "clear mongo" => houseDao.clearMongo()
         case s"save" => outputToFile(fileName, housesArrayBuffer)
         case s"save as $name" => outputToFile(name, housesArrayBuffer)
-        case s"save undervalued houses as $bVName" => outputToFile(bVName, findUndervalued(housesArrayBuffer))
+        case s"save undervalue houses as $bVName" => outputToFile(bVName, findUndervalued(housesArrayBuffer))
         case "i" | "?" | "help" => instructions
-        case ("q" | "exit") => println("Exiting");
+        case ("q" | "exit") => println("Exiting")
         case _ => println("Invalid option. Press i for list of instructions")
       }
     }
@@ -203,6 +205,7 @@ object HousingPricesReader extends App {
       "\n\tfind under             - Find houses that are undervalued" +
       "\n\tmongo                  - Outputs to mongo" +
       "\n\tmongo undervalue       - Outputs undervalued houses to mongo" +
+      "\n\tclear mongo            - Clears mongodb database" +
       "\n\tsave                   - Save current file" +
       "\n\tsave as                - Save current file as <specifiedName>" +
       "\n\ti                      - Instructions" +

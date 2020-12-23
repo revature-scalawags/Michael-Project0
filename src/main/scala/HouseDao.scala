@@ -32,4 +32,8 @@ case class HouseDao(mongoClient: MongoClient) {
     getResults(collection.insertOne(house))
   }
 
+  def clearMongo(): Unit ={
+    getResults(collection.drop())
+  }
+
 }

@@ -19,14 +19,14 @@ Run the image
 # Requirements
 - [ ] Written in Scala/SBT
 - [ ] Takes input from CLI
-    - [ ] CSV or JSON simple datasets
+    - [ ] CSV datasets
     - [ ] Flags/environment variables
     - [ ] arguments
 - [ ] Parses datasets into a Collection
-    - [ ] Every line parsed into arrays
-    - [ ] Every item in a line is gathered into a Map
+    - [ ] Every line parsed as House
+    - [ ] Houses stored into a collection
 - [ ] Analysis
-    - [ ] Count every instance of a key from the Map
+    - [ ] Computes max, min, average, and finds undervalued houses
 - [ ] Output analysis
     - [ ] Output to STDOUT
     - [ ] Output to File
